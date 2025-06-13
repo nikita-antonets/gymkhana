@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import javafx.geometry.Rectangle2D;
 
 public class JeuGymkhana extends Application {
-    private static final int TAILLE_GRILLE = 5; // Doit être impair
+    private static final int TAILLE_GRILLE = 9; // Doit être impair
     private boolean tourNoir = true;
     private final Logique logique = new Logique(TAILLE_GRILLE);
     private final String[][] matrice = genererMatriceInitiale();
