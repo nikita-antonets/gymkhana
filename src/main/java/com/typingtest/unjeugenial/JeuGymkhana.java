@@ -12,7 +12,7 @@ public class JeuGymkhana extends Application {
 
     private static final int TAILLE_GRILLE = 9
             ; // Nombre impair positif
-    private boolean tourRouge = true; // Variable pour suivre le tour actuel
+    private boolean tourNoir = true; // Variable pour suivre le tour actuel
 
     // Méthode pour générer automatiquement la matrice initiale
     private String[][] genererMatriceInitiale(int taille) {
@@ -75,7 +75,7 @@ public class JeuGymkhana extends Application {
                             System.out.println("Case cliquée à la position (" + posX + ", " + posY + ")");
 
                             String newForm;
-                            if (tourRouge) {
+                            if (tourNoir) {
                                 if (posY % 2 == 0) {
                                     newForm = "Ahn";
                                 } else {
@@ -95,8 +95,8 @@ public class JeuGymkhana extends Application {
                             root.getChildren().add(newFigure.getForme());
 
                             // Changer de tour et mettre à jour la couleur de fond
-                            tourRouge = !tourRouge;
-                            root.setStyle("-fx-background-color: " + (tourRouge ? "#d1d1d1" : "#ffdeeb") + ";");
+                            tourNoir = !tourNoir;
+                            root.setStyle("-fx-background-color: " + (tourNoir ? "#d1d1d1" : "#ffdeeb") + ";");
                         });
 
                         figure.getForme().setOnMouseEntered(event -> {
