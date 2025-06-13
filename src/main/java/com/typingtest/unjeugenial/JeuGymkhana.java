@@ -9,15 +9,19 @@ import javafx.stage.Stage;
 import javafx.geometry.Rectangle2D;
 
 public class JeuGymkhana extends Application {
-    private static final int TAILLE_GRILLE = 9; // Doit être impair
+    private static final int TAILLE_GRILLE = 5; // Doit être impair
     private boolean tourNoir = true;
     private final Logique logique = new Logique(TAILLE_GRILLE);
     private final String[][] matrice = genererMatriceInitiale();
+    private Pane root; // Déclaré comme champ de classe pour y accéder partout
 
     @Override
     public void start(Stage stage) {
-        Pane root = new Pane();
+        root = new Pane();
         double tailleCellule = initialiserPlateau(root);
+
+        // Couleur initiale (tour des noirs)
+        root.setStyle("-fx-background-color: #d1d1d1;");
 
         Scene scene = new Scene(root, tailleCellule * TAILLE_GRILLE, tailleCellule * TAILLE_GRILLE);
         stage.setTitle("Jeu Gymkhana " + TAILLE_GRILLE + "x" + TAILLE_GRILLE);
@@ -35,37 +39,46 @@ public class JeuGymkhana extends Application {
                 root.getChildren().add(figure.getForme());
 
                 if (matrice[y][x].equals(".")) {
-                    configurerCaseCliquable(root, figure, x, y, tailleCellule);
+                    configurerCaseCliquable(figure, x, y, tailleCellule);
                 }
             }
         }
         return tailleCellule;
     }
 
-    private void configurerCaseCliquable(Pane root, Figures figure, int x, int y, double tailleCellule) {
-        figure.getForme().setOnMouseClicked(event -> {
-            String newForm = tourNoir ?
-                    (y % 2 == 0 ? "Ahn" : "Avn") :
-                    (y % 2 != 0 ? "Ahr" : "Avr");
+    private void configurerCaseCliquable(Figures figure, int x, int y, double tailleCellule) {
+        // Vérifier si la case est sur le bord
+        boolean surBord = (x == 0 || x == TAILLE_GRILLE - 1 || y == 0 || y == TAILLE_GRILLE - 1);
 
-            // Mise à jour de la matrice
-            matrice[y][x] = newForm;
+        if (!surBord) {  // Seulement configurer le clic si ce n'est pas un bord
+            figure.getForme().setOnMouseClicked(event -> {
+                String newForm = tourNoir ?
+                        (y % 2 == 0 ? "Ahn" : "Avn") :
+                        (y % 2 != 0 ? "Ahr" : "Avr");
 
-            // Mise à jour de l'affichage
-            Figures nouvelleFigure = new Figures(newForm, x, y, tailleCellule);
-            root.getChildren().remove(figure.getForme());
-            root.getChildren().add(nouvelleFigure.getForme());
+                matrice[y][x] = newForm;
 
-            // Vérification victoire
-            int[][] matriceNumerique = convertirMatrice();
-            String resultat = logique.verifierGagnant(matriceNumerique);
+                Figures nouvelleFigure = new Figures(newForm, x, y, tailleCellule);
+                root.getChildren().remove(figure.getForme());
+                root.getChildren().add(nouvelleFigure.getForme());
 
-            if (!resultat.contains("encore")) {
-                new Alert(Alert.AlertType.INFORMATION, resultat).show();
-            }
+                int[][] matriceNumerique = convertirMatrice();
+                String resultat = logique.verifierGagnant(matriceNumerique);
 
-            tourNoir = !tourNoir;
-        });
+                if (!resultat.contains("encore")) {
+                    new Alert(Alert.AlertType.INFORMATION, resultat).show();
+                }
+
+                tourNoir = !tourNoir;
+                root.setStyle("-fx-background-color: " + (tourNoir ? "#d1d1d1" : "#ffdeeb") + ";");
+            });
+
+            // Optionnel: changer le curseur pour les cases cliquables
+            figure.getForme().setOnMouseEntered(e ->
+                    figure.getForme().setCursor(javafx.scene.Cursor.HAND));
+            figure.getForme().setOnMouseExited(e ->
+                    figure.getForme().setCursor(javafx.scene.Cursor.DEFAULT));
+        }
     }
 
     private int[][] convertirMatrice() {
