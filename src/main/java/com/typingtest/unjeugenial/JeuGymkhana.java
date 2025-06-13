@@ -10,7 +10,8 @@ import javafx.geometry.Rectangle2D;
 
 public class JeuGymkhana extends Application {
 
-    private static final int TAILLE_GRILLE = 11; // Nombre impair positif
+    private static final int TAILLE_GRILLE = 9
+            ; // Nombre impair positif
     private boolean tourRouge = true; // Variable pour suivre le tour actuel
 
     // Méthode pour générer automatiquement la matrice initiale
